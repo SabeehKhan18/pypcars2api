@@ -1,18 +1,18 @@
 import unittest
-import carseour
+import pypcars2api
 
 """
-Run tests from the main carseour directory: python -m unittest tests.api
+Run tests from the main pypcars2api directory: python -m unittest tests.api
 """
 class TestAPI(unittest.TestCase):
     def setUp(self):
-        self.data = carseour.live()
+        self.data = pypcars2api.live()
 
     def tearDown(self):
         pass
 
     def test_valid_api(self):
-        self.assertEqual(self.data.mVersion, carseour.definitions.SHARED_MEMORY_VERSION)
+        self.assertEqual(self.data.mVersion, pypcars2api.definitions.SHARED_MEMORY_VERSION)
 
     def test_wheels(self):
         wheels = self.data.wheels()
