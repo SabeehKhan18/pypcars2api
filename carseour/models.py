@@ -1,10 +1,10 @@
-import carseour.definitions
+import pypcars2api.definitions
 
-class GameInstance(carseour.definitions.GameInstance):
+class GameInstance(pypcars2api.definitions.GameInstance):
     def wheels(self):
         wheels = []
 
-        for i in range(0, carseour.definitions.TYRE_MAX):
+        for i in range(0, pypcars2api.definitions.TYRE_MAX):
             wheels.append({
                 'tyre': {
                     'flags': self.mTyreFlags[i],
