@@ -3,10 +3,10 @@ Start Project Cars, run python speed.py and drive around in the game .. You shou
 console that indicate the speed for the car.
 """
 
-import carseour
+import pypcars2api
 import time
 
-game = carseour.live()
+game = pypcars2api.live()
 
 while True:
     print("Speed: " + str(round(game.mSpeed, 1)) + " m/s")
