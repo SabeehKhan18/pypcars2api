@@ -3,7 +3,7 @@
 """
 import ctypes
 
-SHARED_MEMORY_VERSION = 5
+SHARED_MEMORY_VERSION = 8
 
 STRING_LENGTH_MAX = 64
 
@@ -24,7 +24,11 @@ GAME_EXITED = 0
 GAME_FRONT_END = 1
 GAME_INGAME_PLAYING = 2
 GAME_INGAME_PAUSED = 3
-GAME_MAX = 4
+GAME_INGAME_INMENU_TIME_TICKING = 4
+GAME_INGAME_RESTARTING = 5
+GAME_INGAME_REPLAY = 6
+GAME_FRONT_END_REPLAY = 7
+GAME_MAX = 8
 
 SESSION_INVALID = 0
 SESSION_PRACTICE = 1
@@ -44,23 +48,19 @@ RACESTATE_RETIRED = 5
 RACESTATE_DNF = 6
 RACESTATE_MAX = 7
 
-SECTOR_INVALID = 0
-SECTOR_START = 1
-SECTOR_SECTOR1 = 2
-SECTOR_SECTOR2 = 3
-SECTOR_FINISH = 4
-SECTOR_STOP = 5
-SECTOR_MAX = 6
-
 FLAG_COLOUR_NONE = 0
 FLAG_COLOUR_GREEN = 1
 FLAG_COLOUR_BLUE = 2
-FLAG_COLOUR_WHITE = 3
-FLAG_COLOUR_YELLOW = 4
-FLAG_COLOUR_DOUBLE_YELLOW = 5
-FLAG_COLOUR_BLACK = 6
-FLAG_COLOUR_CHEQUERED = 7
-FLAG_COLOUR_MAX = 8
+FLAG_COLOUR_WHITE_SLOW_CAR = 3
+FLAG_COLOUR_WHITE_FINAL_LAP = 4
+FLAG_COLOUR_RED = 5
+FLAG_COLOUR_YELLOW = 6
+FLAG_COLOUR_DOUBLE_YELLOW = 7
+FLAG_COLOUR_BLACK_AND_WHITE = 8
+FLAG_COLOUR_BLACK_ORANGE_CIRCLE = 9
+FLAG_COLOUR_BLACK = 10
+FLAG_COLOUR_CHEQUERED = 11
+FLAG_COLOUR_MAX = 12
 
 FLAG_REASON_NONE = 0
 FLAG_REASON_SOLO_CRASH = 1
@@ -73,13 +73,18 @@ PIT_MODE_DRIVING_INTO_PITS = 1
 PIT_MODE_IN_PIT = 2
 PIT_MODE_DRIVING_OUT_OF_PITS = 3
 PIT_MODE_IN_GARAGE = 4
-PIT_MODE_MAX = 5
+PIT_MODE_DRIVING_OUT_OF_GARAGE = 5
+PIT_MODE_MAX = 6
 
 PIT_SCHEDULE_NONE = 0
-PIT_SCHEDULE_STANDARD = 1
-PIT_SCHEDULE_DRIVE_THROUGH = 2
-PIT_SCHEDULE_STOP_GO = 3
-PIT_SCHEDULE_MAX = 4
+PIT_SCHEDULE_PLAYER_REQUESTED = 1
+PIT_SCHEDULE_ENGINEER_REQUESTED = 2
+PIT_SCHEDULE_DAMAGE_REQUESTED = 3
+PIT_SCHEDULE_MANDATORY = 4
+PIT_SCHEDULE_DRIVE_THROUGH = 5
+PIT_SCHEDULE_STOP_GO = 6
+PIT_SCHEDULE_PITSPOT_OCCUPIED = 7
+PIT_SCHEDULE_MAX = 8
 
 CAR_HEADLIGHT = ( 1 << 0 )
 CAR_ENGINE_ACTIVE = ( 1 << 1 )
@@ -127,7 +132,20 @@ TERRAIN_BAKED_CLAY = 31
 TERRAIN_ASTROTURF = 32
 TERRAIN_SNOWHALF = 33
 TERRAIN_SNOWFULL = 34
-TERRAIN_MAX = 35
+TERRAIN_DAMAGED_ROAD1 = 35
+TERRAIN_TRAIN_TRACK_ROAD = 36
+TERRAIN_BUMPYCOBBLES = 37
+TERRAIN_ARIES_ONLY = 38
+TERRAIN_ORION_ONLY = 39
+TERRAIN_B1RUMBLES = 40
+TERRAIN_B2RUMBLES = 41
+TERRAIN_ROUGH_SAND_MEDIUM = 42
+TERRAIN_ROUGH_SAND_HEAVY = 43
+TERRAIN_SNOWWALLS = 44
+TERRAIN_ICE_ROAD = 45
+TERRAIN_RUNOFF_ROAD = 46
+TERRAIN_ILLEGAL_STRIP = 47
+TERRAIN_MAX = 48
 
 CRASH_DAMAGE_NONE = 0
 CRASH_DAMAGE_OFFTRACK = 1
@@ -135,19 +153,6 @@ CRASH_DAMAGE_LARGE_PROP = 2
 CRASH_DAMAGE_SPINNING = 3
 CRASH_DAMAGE_ROLLING = 4
 CRASH_MAX = 5
-
-class ParticipantInfo(ctypes.Structure):
-    _fields_ = [
-        ('mIsActive', ctypes.c_bool),
-        ('mName', ctypes.c_char * STRING_LENGTH_MAX),
-        ('mWorldPosition', ctypes.c_float * VEC_MAX),
-        ('mCurrentLapDistance', ctypes.c_float),
-        ('mRacePosition', ctypes.c_uint),
-        ('mLapsCompleted', ctypes.c_uint),
-        ('mCurrentLap', ctypes.c_uint),
-        ('mCurrentSector', ctypes.c_uint),
-    ]
-    
 
 class GameInstance(ctypes.Structure):
     _fields_ = [
@@ -169,6 +174,7 @@ class GameInstance(ctypes.Structure):
         ('mTrackLocation', ctypes.c_char * STRING_LENGTH_MAX),
         ('mTrackVariation', ctypes.c_char * STRING_LENGTH_MAX),
         ('mTrackLength', ctypes.c_float),
+        ('mNumSectors', ctypes.c_int),
         ('mLapInvalidated', ctypes.c_bool),
         ('mBestLapTime', ctypes.c_float),
         ('mLastLapTime', ctypes.c_float),
@@ -253,6 +259,47 @@ class GameInstance(ctypes.Structure):
         ('mWindDirectionX', ctypes.c_float),
         ('mWindDirectionY', ctypes.c_float),
         ('mCloudBrightness', ctypes.c_float),
+        ('mSequenceNumber', ),
+        ('mWheelLocalPositionY', ctypes.c_float * TYRE_MAX),
+        ('mSuspensionTravel', ctypes.c_float * TYRE_MAX),
+        ('mSuspensionVelocity', ctypes.c_float * TYRE_MAX),
+        ('mAirPressure', ctypes.c_float * TYRE_MAX),
+        ('mEngineSpeed', ctypes.c_float),
+        ('mEngineTorque', ctypes.c_float),
+        ('mWings', ctypes.c_float * 2),
+        ('mHandBrake', ctypes.c_float),
+        ('mCurrentSector1Times', ctypes.c_float * STORED_PARTICIPANTS_MAX),
+        ('mCurrentSector2Times', ctypes.c_float * STORED_PARTICIPANTS_MAX),
+        ('mCurrentSector3Times', ctypes.c_float * STORED_PARTICIPANTS_MAX),
+        ('mFastestSector1Times', ctypes.c_float * STORED_PARTICIPANTS_MAX),
+        ('mFastestSector2Times', ctypes.c_float * STORED_PARTICIPANTS_MAX),
+        ('mFastestSector3Times', ctypes.c_float * STORED_PARTICIPANTS_MAX),
+        ('mFastestLapTimes', ctypes.c_float * STORED_PARTICIPANTS_MAX),
+        ('mLastLapTimes', ctypes.c_float * STORED_PARTICIPANTS_MAX),
+        ('mLapsInvalidated', ctypes.c_bool * STORED_PARTICIPANTS_MAX),
+        ('mRaceStates', ctypes.c_uint * STORED_PARTICIPANTS_MAX),
+        ('mPitModes', ctypes.c_uint * STORED_PARTICIPANTS_MAX),
+        ('mOrientations', ctypes.c_float * 1),
+        ('mSpeeds', ctypes.c_float * STORED_PARTICIPANTS_MAX),
+        ('mCarNames', ctypes.c_char * 1),
+        ('mCarClassNames', ctypes.c_char * 1),
+        ('mEnforcedPitStopLap', ctypes.c_int),
+        ('mTranslatedTrackLocation', ctypes.c_char * STRING_LENGTH_MAX),
+        ('mTranslatedTrackVariation', ctypes.c_char * STRING_LENGTH_MAX),
     ]
     
+
+class ParticipantInfo(ctypes.Structure):
+    _fields_ = [
+        ('mIsActive', ctypes.c_bool),
+        ('mName', ctypes.c_char * STRING_LENGTH_MAX),
+        ('mWorldPosition', ctypes.c_float * VEC_MAX),
+        ('mCurrentLapDistance', ctypes.c_float),
+        ('mRacePosition', ctypes.c_uint),
+        ('mLapsCompleted', ctypes.c_uint),
+        ('mCurrentLap', ctypes.c_uint),
+        ('mCurrentSector', ctypes.c_int),
+    ]
+    
+
 
