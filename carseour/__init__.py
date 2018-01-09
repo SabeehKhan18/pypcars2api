@@ -5,7 +5,7 @@ from carseour.definitions import SHARED_MEMORY_VERSION
 def _get_mmapped():
     # could we use ctypes.sizeof(GameInstance) instead here? A too large value results in access denied,
     # 8k works for now
-    return mmap.mmap(0, 8000, tagname='$pcars$')
+    return mmap.mmap(0, 8000, tagname='$pcars2$')
 
 def _validate_instance(instance):
     if instance.mVersion != SHARED_MEMORY_VERSION:
