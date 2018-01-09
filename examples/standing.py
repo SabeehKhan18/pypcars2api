@@ -1,11 +1,11 @@
 """
-Start Project Cars, run python standing.py while doing a race.
+Start Project Cars 2, run python standing.py while doing a race.
 """
 
-import carseour
+import pypcars2api
 import time
 
-game = carseour.live()
+game = pypcars2api.live()
 
 while True:
     for player in game.standing():
