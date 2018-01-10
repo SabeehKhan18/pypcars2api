@@ -154,6 +154,19 @@ CRASH_DAMAGE_SPINNING = 3
 CRASH_DAMAGE_ROLLING = 4
 CRASH_MAX = 5
 
+
+class ParticipantInfo(ctypes.Structure):
+    _fields_ = [
+        ('mIsActive', ctypes.c_bool),
+        ('mName', ctypes.c_char * STRING_LENGTH_MAX),
+        ('mWorldPosition', ctypes.c_float * VEC_MAX),
+        ('mCurrentLapDistance', ctypes.c_float),
+        ('mRacePosition', ctypes.c_uint),
+        ('mLapsCompleted', ctypes.c_uint),
+        ('mCurrentLap', ctypes.c_uint),
+        ('mCurrentSector', ctypes.c_int),
+    ]
+
 class GameInstance(ctypes.Structure):
     _fields_ = [
         ('mVersion', ctypes.c_uint),
@@ -259,7 +272,7 @@ class GameInstance(ctypes.Structure):
         ('mWindDirectionX', ctypes.c_float),
         ('mWindDirectionY', ctypes.c_float),
         ('mCloudBrightness', ctypes.c_float),
-        ('mSequenceNumber', ),
+        ('mSequenceNumber', ctypes.c_float),
         ('mWheelLocalPositionY', ctypes.c_float * TYRE_MAX),
         ('mSuspensionTravel', ctypes.c_float * TYRE_MAX),
         ('mSuspensionVelocity', ctypes.c_float * TYRE_MAX),
@@ -287,19 +300,3 @@ class GameInstance(ctypes.Structure):
         ('mTranslatedTrackLocation', ctypes.c_char * STRING_LENGTH_MAX),
         ('mTranslatedTrackVariation', ctypes.c_char * STRING_LENGTH_MAX),
     ]
-    
-
-class ParticipantInfo(ctypes.Structure):
-    _fields_ = [
-        ('mIsActive', ctypes.c_bool),
-        ('mName', ctypes.c_char * STRING_LENGTH_MAX),
-        ('mWorldPosition', ctypes.c_float * VEC_MAX),
-        ('mCurrentLapDistance', ctypes.c_float),
-        ('mRacePosition', ctypes.c_uint),
-        ('mLapsCompleted', ctypes.c_uint),
-        ('mCurrentLap', ctypes.c_uint),
-        ('mCurrentSector', ctypes.c_int),
-    ]
-    
-
-
