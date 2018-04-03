@@ -3,11 +3,13 @@
 """
 import ctypes
 
-SHARED_MEMORY_VERSION = 8
+SHARED_MEMORY_VERSION = 9
 
 STRING_LENGTH_MAX = 64
 
 STORED_PARTICIPANTS_MAX = 64
+
+TYRE_COMPOUND_NAME_LENGTH_MAX = 40
 
 TYRE_FRONT_LEFT = 0
 TYRE_FRONT_RIGHT = 1
@@ -145,7 +147,10 @@ TERRAIN_SNOWWALLS = 44
 TERRAIN_ICE_ROAD = 45
 TERRAIN_RUNOFF_ROAD = 46
 TERRAIN_ILLEGAL_STRIP = 47
-TERRAIN_MAX = 48
+TERRAIN_PAINT_CONCRETE = 48
+TERRAIN_PAINT_CONCRETE_ILLEGAL = 49
+TERRAIN_RALLY_TARMAC = 50
+TERRAIN_MAX = 51
 
 CRASH_DAMAGE_NONE = 0
 CRASH_DAMAGE_OFFTRACK = 1
@@ -299,4 +304,12 @@ class GameInstance(ctypes.Structure):
         ('mEnforcedPitStopLap', ctypes.c_int),
         ('mTranslatedTrackLocation', ctypes.c_char * STRING_LENGTH_MAX),
         ('mTranslatedTrackVariation', ctypes.c_char * STRING_LENGTH_MAX),
+		('mBrakeBias', ctypes.c_float),
+		('mTurboBoostPressure', ctypes.c_float),
+		('mTyreCompound', ctypes.c_char * TYRE_MAX * TYRE_COMPOUND_NAME_LENGTH_MAX),
+		('mPitSchedules', ctypes.c_uint * STORED_PARTICIPANTS_MAX),
+		('mHighestFlagColours', ctypes.c_uint * STORED_PARTICIPANTS_MAX),
+		('mHighestFlagReasons', ctypes.c_uint * STORED_PARTICIPANTS_MAX),
+		('mNationalities', ctypes.c_uint * STORED_PARTICIPANTS_MAX),
+		('mSnowDensity', ctypes.c_float),
     ]
