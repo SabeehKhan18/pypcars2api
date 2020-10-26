@@ -9,10 +9,10 @@ def _get_mmapped():
 
 def _validate_instance(instance):
     if instance.mVersion != SHARED_MEMORY_VERSION:
-        raise InvalidSharedMemoryVersionException("""
-            Mismatch between library data structure version and game data structure version.
-            Retrieve new SharedMemory.h and run bin/generate_classes.py to regenerate the definitions file.
-            """)
+        #
+        #Mismatch between library data structure version and game data structure version.
+        #Retrieve new SharedMemory.h and run bin/generate_classes.py to regenerate the definitions file.
+        return False
 
     return instance
 
