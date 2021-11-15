@@ -14,7 +14,7 @@ def _validate_instance(instance):
         #Retrieve new SharedMemory.h and run bin/generate_classes.py to regenerate the definitions file.
         return False, instance.mVersion, SHARED_MEMORY_VERSION
 
-    return instance
+    return instance, instance.mVersion, SHARED_MEMORY_VERSION
 
 def live():
     return _validate_instance(GameInstance.from_buffer(_get_mmapped()))
