@@ -12,7 +12,7 @@ def _validate_instance(instance):
         #
         #Mismatch between library data structure version and game data structure version.
         #Retrieve new SharedMemory.h and run bin/generate_classes.py to regenerate the definitions file.
-        return False
+        return False, instance.mVersion, SHARED_MEMORY_VERSION
 
     return instance
 
