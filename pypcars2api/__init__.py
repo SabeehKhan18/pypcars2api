@@ -22,6 +22,8 @@ def get_shared_memory_version():
 def get_mversion():
     return GameInstance.from_buffer(_get_mmapped()).mVersion
 
+def get_mcarname():
+    return GameInstance.from_buffer(_get_mmapped()).mCarName
 
 def live():
     return _validate_instance(GameInstance.from_buffer(_get_mmapped()))
