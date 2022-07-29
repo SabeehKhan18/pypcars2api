@@ -5,7 +5,7 @@ from pypcars2api.definitions import SHARED_MEMORY_VERSION
 def _get_mmapped():
     # could we use ctypes.sizeof(GameInstance) instead here? A too large value results in access denied,
     # 8k works for now
-    return mmap.mmap(0, 11624, tagname='$pcars2$', access=mmap.ACCESS_READ)
+    return mmap.mmap(0, 20576, tagname='$pcars2$', access=mmap.ACCESS_READ)
 
 def _validate_instance(instance):
     if instance.mVersion != SHARED_MEMORY_VERSION:
